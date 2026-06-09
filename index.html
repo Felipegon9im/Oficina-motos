@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Carlinhos Motos – Revisão em Florianópolis</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --red: #CC0000;
+      --red-bright: #FF2020;
+      --bg: #0A0A0A;
+      --bg2: #141414;
+      --card: #1A1A1A;
+      --text: #F0F0F0;
+      --muted: #888;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3, .bebas { font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.03em; }
+
+    /* ── NAVBAR ── */
+    #navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      transition: background 0.3s, backdrop-filter 0.3s;
+    }
+    #navbar.scrolled {
+      background: rgba(10,10,10,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(204,0,0,0.3);
+    }
+
+    /* ── HERO ── */
+    #hero {
+      height: 100vh;
+      min-height: 600px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      padding-top: 80px;
+    }
+    #hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 70% 50%, rgba(204,0,0,0.18) 0%, transparent 70%),
+        linear-gradient(160deg, #0A0A0A 45%, #1a0000 100%);
+    }
+    .hero-grid-lines {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(204,0,0,0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(204,0,0,0.06) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 80% 80% at 60% 50%, black 30%, transparent 100%);
+    }
+    .slash-accent {
+      position: absolute;
+      right: -60px;
+      top: 0;
+      bottom: 0;
+      width: 55%;
+      background: linear-gradient(160deg, transparent 30%, rgba(204,0,0,0.08) 100%);
+      clip-path: polygon(15% 0%, 100% 0%, 100% 100%, 0% 100%);
+    }
+
+    #hero-moto {
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 52%;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+    }
+    @media (max-width: 768px) {
+      #hero-moto { width: 100%; opacity: 0.18; z-index: 0; }
+    }
+
+    /* ── GALLERY ── */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: auto auto;
+      gap: 12px;
+    }
+    .gallery-grid .g-main {
+      grid-column: 1 / 2;
+      grid-row: 1 / 3;
+    }
+    .gallery-item {
+      border-radius: 8px;
+      overflow: hidden;
+      position: relative;
+    }
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.5s ease, filter 0.3s;
+      filter: saturate(0.75);
+    }
+    .gallery-item:hover img {
+      transform: scale(1.05);
+      filter: saturate(1);
+    }
+    .gallery-item::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border: 1px solid rgba(204,0,0,0);
+      border-radius: 8px;
+      transition: border-color 0.3s;
+    }
+    .gallery-item:hover::after { border-color: rgba(204,0,0,0.5); }
+    @media (max-width: 640px) {
+      .gallery-grid { grid-template-columns: repeat(2,1fr); }
+      .gallery-grid .g-main { grid-column: 1/3; grid-row: 1/2; }
+    }
+    .red-bar {
+      display: inline-block;
+      background: var(--red);
+      height: 4px;
+      border-radius: 2px;
+    }
+
+    /* ── SCROLL SEQUENCE ── */
+    .seq-section {
+      position: relative;
+      overflow: hidden;
+    }
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-left {
+      opacity: 0;
+      transform: translateX(-50px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal-left.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    .reveal-right {
+      opacity: 0;
+      transform: translateX(50px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal-right.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    .reveal-scale {
+      opacity: 0;
+      transform: scale(0.85);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .reveal-scale.visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+    .delay-1 { transition-delay: 0.1s !important; }
+    .delay-2 { transition-delay: 0.2s !important; }
+    .delay-3 { transition-delay: 0.3s !important; }
+    .delay-4 { transition-delay: 0.4s !important; }
+    .delay-5 { transition-delay: 0.5s !important; }
+    .delay-6 { transition-delay: 0.6s !important; }
+
+    /* ── DIAGONAL DIVIDER ── */
+    .diag-top::before {
+      content: '';
+      display: block;
+      height: 60px;
+      background: inherit;
+      clip-path: polygon(0 100%, 100% 0, 100% 100%);
+      margin-top: -59px;
+    }
+    .diag-bottom::after {
+      content: '';
+      display: block;
+      height: 60px;
+      background: inherit;
+      clip-path: polygon(0 0, 100% 0, 0 100%);
+      margin-bottom: -59px;
+    }
+
+    /* ── SERVICE CARDS ── */
+    .service-card {
+      background: var(--card);
+      border: 1px solid rgba(204,0,0,0.15);
+      border-radius: 8px;
+      padding: 28px 24px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+    .service-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: var(--red);
+      transform: scaleY(0);
+      transition: transform 0.3s;
+      transform-origin: bottom;
+    }
+    .service-card:hover { border-color: rgba(204,0,0,0.5); transform: translateY(-4px); }
+    .service-card:hover::before { transform: scaleY(1); }
+    .service-card:hover img { transform: scale(1.07); filter: saturate(0.9) brightness(0.95); }
+
+    /* ── BENEFIT CARD ── */
+    .benefit-card {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 32px 24px;
+      text-align: center;
+      border: 1px solid rgba(255,255,255,0.04);
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .benefit-card:hover {
+      border-color: rgba(204,0,0,0.4);
+      box-shadow: 0 0 30px rgba(204,0,0,0.12);
+    }
+    .benefit-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: rgba(204,0,0,0.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 28px;
+      transition: background 0.3s;
+    }
+    .benefit-card:hover .benefit-icon { background: rgba(204,0,0,0.25); }
+
+    /* ── CTA BAND ── */
+    .cta-band {
+      background: var(--red);
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-band::before {
+      content: 'REVISÃO';
+      position: absolute;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 220px;
+      color: rgba(0,0,0,0.1);
+      right: -20px;
+      top: 50%;
+      transform: translateY(-50%);
+      white-space: nowrap;
+      pointer-events: none;
+      letter-spacing: 0.05em;
+    }
+
+    /* ── CONTACT ── */
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 20px;
+      background: var(--card);
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.05);
+      transition: border-color 0.3s;
+    }
+    .contact-item:hover { border-color: rgba(204,0,0,0.4); }
+    .contact-icon {
+      width: 48px;
+      height: 48px;
+      flex-shrink: 0;
+      background: rgba(204,0,0,0.15);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    /* ── BTN ── */
+    .btn-red {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--red);
+      color: #fff;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 18px;
+      letter-spacing: 0.08em;
+      padding: 14px 32px;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.2s;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-red:hover {
+      background: var(--red-bright);
+      transform: translateY(-2px);
+    }
+    .btn-outline {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 2px solid var(--red);
+      color: #fff;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 18px;
+      letter-spacing: 0.08em;
+      padding: 12px 30px;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .btn-outline:hover {
+      background: rgba(204,0,0,0.15);
+      transform: translateY(-2px);
+    }
+
+    /* ── COUNTER ── */
+    .stat-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 64px;
+      color: var(--red-bright);
+      line-height: 1;
+    }
+
+    /* ── MARQUEE ── */
+    .marquee-wrap {
+      overflow: hidden;
+      background: var(--red);
+      padding: 14px 0;
+    }
+    .marquee-track {
+      display: flex;
+      width: max-content;
+      animation: marquee 22s linear infinite;
+    }
+    .marquee-track span {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.85);
+      padding: 0 28px;
+    }
+    .marquee-track span.sep {
+      color: rgba(255,255,255,0.4);
+    }
+    @keyframes marquee {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* ── PHONE PULSE ── */
+    .pulse-ring {
+      position: relative;
+    }
+    .pulse-ring::before {
+      content: '';
+      position: absolute;
+      inset: -8px;
+      border-radius: 50%;
+      background: rgba(204,0,0,0.35);
+      animation: pulse 2s ease-out infinite;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 1; }
+      100% { transform: scale(1.6); opacity: 0; }
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: #050505;
+      border-top: 1px solid rgba(204,0,0,0.2);
+    }
+
+    /* ── HAMBURGER ── */
+    #menu-toggle { display: none; }
+    #mobile-menu {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(10,10,10,0.97);
+      z-index: 200;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+    }
+    #mobile-menu.open { display: flex; }
+    #mobile-menu a {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 36px;
+      color: var(--text);
+      text-decoration: none;
+      letter-spacing: 0.06em;
+      transition: color 0.2s;
+    }
+    #mobile-menu a:hover { color: var(--red); }
+
+    @media (max-width: 640px) {
+      .stat-num { font-size: 44px; }
+      .cta-band::before { font-size: 120px; }
+    }
+
+    /* ── WA TOOLTIP ── */
+    #wa-container {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 12px;
+    }
+    #wa-tooltip {
+      background: #fff;
+      color: #333;
+      padding: 12px 18px;
+      border-radius: 12px;
+      border-bottom-right-radius: 4px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      font-size: 14px;
+      font-weight: 500;
+      opacity: 0;
+      transform: translateY(10px) scale(0.95);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+      pointer-events: none;
+      transform-origin: bottom right;
+      position: relative;
+      margin-right: 6px;
+    }
+    #wa-tooltip::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      right: 14px;
+      width: 12px;
+      height: 12px;
+      background: #fff;
+      transform: rotate(45deg);
+    }
+    .wa-dot {
+      width: 4px;
+      height: 4px;
+      background: #888;
+      border-radius: 50%;
+      animation: typeBounce 1.4s infinite ease-in-out both;
+      display: inline-block;
+    }
+    .wa-dot:nth-child(2) { animation-delay: -0.32s; }
+    .wa-dot:nth-child(3) { animation-delay: -0.16s; }
+    @keyframes typeBounce {
+      0%, 80%, 100% { transform: scale(0); }
+      40% { transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════ NAVBAR ═══════════ -->
+<nav id="navbar" class="px-6 py-4">
+  <div class="max-w-6xl mx-auto flex items-center justify-between">
+    <div class="flex items-center">
+      <img src="logo_transparent.png" alt="Carlinhos Motos" style="height:56px;width:auto;object-fit:contain;filter:drop-shadow(0 0 8px rgba(204,0,0,0.4));" />
+    </div>
+    <div class="hidden md:flex items-center gap-8">
+      <a href="#servicos" style="color:var(--muted);font-size:13px;font-weight:500;text-decoration:none;letter-spacing:0.05em;transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--muted)'">SERVIÇOS</a>
+      <a href="#beneficios" style="color:var(--muted);font-size:13px;font-weight:500;text-decoration:none;letter-spacing:0.05em;transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--muted)'">DIFERENCIAIS</a>
+      <a href="#contato" style="color:var(--muted);font-size:13px;font-weight:500;text-decoration:none;letter-spacing:0.05em;transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--muted)'">CONTATO</a>
+      <a href="https://wa.me/5548998669011" target="_blank" class="btn-red" style="font-size:14px;padding:10px 22px;">Agendar Revisão</a>
+    </div>
+    <button id="menu-toggle-btn" class="md:hidden" style="background:none;border:none;color:var(--text);cursor:pointer;" onclick="document.getElementById('mobile-menu').classList.add('open')">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+</nav>
+
+<!-- mobile menu -->
+<div id="mobile-menu">
+  <button onclick="document.getElementById('mobile-menu').classList.remove('open')" style="position:absolute;top:20px;right:24px;background:none;border:none;color:var(--text);cursor:pointer;font-size:32px;">✕</button>
+  <a href="#servicos" onclick="document.getElementById('mobile-menu').classList.remove('open')">SERVIÇOS</a>
+  <a href="#beneficios" onclick="document.getElementById('mobile-menu').classList.remove('open')">DIFERENCIAIS</a>
+  <a href="#contato" onclick="document.getElementById('mobile-menu').classList.remove('open')">CONTATO</a>
+  <a href="https://wa.me/5548998669011" target="_blank" class="btn-red" style="font-size:22px;margin-top:8px;">Agendar Revisão</a>
+</div>
+
+
+<!-- ═══════════ HERO ═══════════ -->
+<section id="hero">
+  <div id="hero-bg"></div>
+  <div class="hero-grid-lines"></div>
+
+  <!-- logo/branding hero direita -->
+  <div id="hero-moto" style="display:flex;align-items:center;justify-content:center;">
+    <img src="logo_transparent.png" alt="Carlinhos Motos" style="width:90%;max-width:560px;height:auto;object-fit:contain;opacity:0.92;filter:drop-shadow(0 0 40px rgba(204,0,0,0.5)) drop-shadow(0 0 80px rgba(204,0,0,0.25));animation:heroFloat 4s ease-in-out infinite;" />
+  </div>
+  <style>
+    @keyframes heroFloat {
+      0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)}
+    }
+  </style>
+  <!-- overlay gradiente esquerda para cobrir a foto -->
+  <div style="position:absolute;inset:0;background:linear-gradient(to right, #0A0A0A 32%, rgba(10,10,10,0.55) 55%, transparent 100%);pointer-events:none;z-index:1;"></div>
+
+  <div class="max-w-6xl mx-auto px-6 relative z-10 w-full">
+    <div class="max-w-2xl">
+      <div class="reveal" style="display:inline-flex;align-items:center;gap:10px;background:rgba(204,0,0,0.12);border:1px solid rgba(204,0,0,0.3);border-radius:100px;padding:6px 16px;margin-bottom:24px;">
+        <span style="width:8px;height:8px;background:var(--red-bright);border-radius:50%;display:inline-block;animation:pulse 2s infinite;"></span>
+        <span style="font-size:12px;font-weight:600;letter-spacing:0.12em;color:var(--red-bright);">INGLESES – FLORIANÓPOLIS/SC</span>
+      </div>
+
+      <h1 class="reveal delay-1" style="font-size:clamp(56px,10vw,110px);line-height:0.9;margin-bottom:20px;">
+        PRECISANDO<br>
+        <span style="color:var(--red);">DE REVISÃO?</span><br>
+        VENHA AQUI!
+      </h1>
+
+      <p class="reveal delay-2" style="font-size:17px;color:#aaa;line-height:1.65;max-width:480px;margin-bottom:36px;">
+        Cuidado que você sente, confiança que você merece.<br>
+        Sua moto em boas mãos <strong style="color:var(--text);">sempre!</strong>
+      </p>
+
+      <div class="reveal delay-3" style="display:flex;flex-wrap:wrap;gap:14px;align-items:center;">
+        <a href="https://wa.me/5548998669011" target="_blank" class="btn-red">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          AGENDAR REVISÃO
+        </a>
+        <a href="tel:+5548998669011" class="btn-outline">
+          📞 (48) 99866-9011
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- scroll cue -->
+  <div style="position:absolute;bottom:32px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;opacity:0.45;">
+    <span style="font-size:11px;letter-spacing:0.15em;font-weight:600;">SCROLL</span>
+    <div style="width:1px;height:36px;background:linear-gradient(to bottom,#fff,transparent);animation:scrollBob 1.5s ease-in-out infinite;"></div>
+  </div>
+  <style>
+    @keyframes scrollBob {
+      0%,100%{transform:translateY(0)} 50%{transform:translateY(8px)}
+    }
+  </style>
+</section>
+
+
+<!-- ═══════════ MARQUEE ═══════════ -->
+<div class="marquee-wrap">
+  <div class="marquee-track" id="marquee-track">
+    <span>MOTOR</span><span class="sep">•</span>
+    <span>FREIOS</span><span class="sep">•</span>
+    <span>CORRENTE</span><span class="sep">•</span>
+    <span>PNEUS</span><span class="sep">•</span>
+    <span>SUSPENSÃO</span><span class="sep">•</span>
+    <span>REVISÃO COMPLETA</span><span class="sep">•</span>
+    <span>CARLINHOS MOTOS</span><span class="sep">•</span>
+    <span>MOTOR</span><span class="sep">•</span>
+    <span>FREIOS</span><span class="sep">•</span>
+    <span>CORRENTE</span><span class="sep">•</span>
+    <span>PNEUS</span><span class="sep">•</span>
+    <span>SUSPENSÃO</span><span class="sep">•</span>
+    <span>REVISÃO COMPLETA</span><span class="sep">•</span>
+    <span>CARLINHOS MOTOS</span><span class="sep">•</span>
+  </div>
+</div>
+
+
+<!-- ═══════════ STATS ═══════════ -->
+<section style="background:var(--bg2);padding:72px 24px;">
+  <div class="max-w-6xl mx-auto">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+      <div class="reveal">
+        <div class="stat-num" data-target="1500">0</div>
+        <div style="font-size:13px;color:var(--muted);letter-spacing:0.08em;margin-top:4px;">MOTOS REVISADAS</div>
+      </div>
+      <div class="reveal delay-1">
+        <div class="stat-num" data-target="10">0</div>
+        <div style="font-size:13px;color:var(--muted);letter-spacing:0.08em;margin-top:4px;">ANOS DE EXPERIÊNCIA</div>
+      </div>
+      <div class="reveal delay-2">
+        <div class="stat-num" data-target="98">0</div>
+        <div style="font-size:13px;color:var(--muted);letter-spacing:0.08em;margin-top:4px;">% APROVAÇÃO CLIENTES</div>
+      </div>
+      <div class="reveal delay-3">
+        <div class="stat-num" data-target="6">0</div>
+        <div style="font-size:13px;color:var(--muted);letter-spacing:0.08em;margin-top:4px;">SERVIÇOS ESPECIALIZADOS</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════ SERVIÇOS ═══════════ -->
+<section id="servicos" style="padding:96px 24px;background:var(--bg);">
+  <div class="max-w-6xl mx-auto">
+    <div class="reveal" style="margin-bottom:64px;">
+      <div style="font-size:12px;font-weight:600;letter-spacing:0.18em;color:var(--red);margin-bottom:12px;">O QUE FAZEMOS</div>
+      <h2 style="font-size:clamp(42px,6vw,72px);line-height:0.95;margin-bottom:16px;">
+        SERVIÇOS DE<br><span style="color:var(--red);">REVISÃO</span>
+      </h2>
+      <div class="red-bar" style="width:60px;"></div>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+      <div class="service-card reveal delay-1">
+        <div style="height:140px;margin:-28px -24px 20px;overflow:hidden;border-radius:8px 8px 0 0;">
+          <img src="assets/service_engine.png" alt="Motor de moto" style="width:100%;height:100%;object-fit:cover;filter:saturate(0.6) brightness(0.85);transition:transform 0.4s,filter 0.3s;">
+        </div>
+        <h3 style="font-size:22px;margin-bottom:10px;color:var(--text);">Motor</h3>
+        <p style="font-size:14px;color:var(--muted);line-height:1.65;">Verificação completa do motor: óleo, filtros, correia, velas e desempenho geral para garantir máxima potência.</p>
+      </div>
+
+      <div class="service-card reveal delay-2">
+        <div style="height:140px;margin:-28px -24px 20px;overflow:hidden;border-radius:8px 8px 0 0;">
+          <img src="assets/service_brakes.png" alt="Freios de moto" style="width:100%;height:100%;object-fit:cover;filter:saturate(0.6) brightness(0.85);transition:transform 0.4s,filter 0.3s;">
+        </div>
+        <h3 style="font-size:22px;margin-bottom:10px;color:var(--text);">Freios</h3>
+        <p style="font-size:14px;color:var(--muted);line-height:1.65;">Inspeção e substituição de pastilhas, discos e fluido de freio. Sua segurança começa em frear bem.</p>
+      </div>
+
+      <div class="service-card reveal delay-3">
+        <div style="height:140px;margin:-28px -24px 20px;overflow:hidden;border-radius:8px 8px 0 0;">
+          <img src="assets/service_chain.png" alt="Corrente de moto" style="width:100%;height:100%;object-fit:cover;filter:saturate(0.6) brightness(0.85);transition:transform 0.4s,filter 0.3s;">
+        </div>
+        <h3 style="font-size:22px;margin-bottom:10px;color:var(--text);">Corrente e Transmissão</h3>
+        <p style="font-size:14px;color:var(--muted);line-height:1.65;">Tensionamento, lubrificação, troca de corrente e coroa. Transmissão eficiente = economia de combustível.</p>
+      </div>
+
+      <div class="service-card reveal delay-1">
+        <div style="height:140px;margin:-28px -24px 20px;overflow:hidden;border-radius:8px 8px 0 0;">
+          <img src="assets/service_tires.png" alt="Pneu de moto" style="width:100%;height:100%;object-fit:cover;object-position:bottom;filter:saturate(0.6) brightness(0.85);transition:transform 0.4s,filter 0.3s;">
+        </div>
+        <h3 style="font-size:22px;margin-bottom:10px;color:var(--text);">Pneus</h3>
+        <p style="font-size:14px;color:var(--muted);line-height:1.65;">Calibragem, verificação de desgaste e troca de pneus. Aderência correta em qualquer pista.</p>
+      </div>
+
+      <div class="service-card reveal delay-2">
+        <div style="height:140px;margin:-28px -24px 20px;overflow:hidden;border-radius:8px 8px 0 0;">
+          <img src="assets/service_suspension.png" alt="Suspensão de moto" style="width:100%;height:100%;object-fit:cover;filter:saturate(0.6) brightness(0.85);transition:transform 0.4s,filter 0.3s;">
+        </div>
+        <h3 style="font-size:22px;margin-bottom:10px;color:var(--text);">Suspensão</h3>
+        <p style="font-size:14px;color:var(--muted);line-height:1.65;">Regulagem e manutenção de amortecedores e garfos. Conforto e controle em qualquer terreno.</p>
+      </div>
+
+      <div class="service-card reveal delay-3" style="border-color:rgba(204,0,0,0.35);background:rgba(204,0,0,0.06);">
+        <div style="font-size:38px;margin-bottom:16px;">✅</div>
+        <h3 style="font-size:22px;margin-bottom:10px;color:var(--red);">E muito mais!</h3>
+        <p style="font-size:14px;color:var(--muted);line-height:1.65;">Elétrica, carburação, regulagem de válvulas, troca de relação, inspeção geral e diagnóstico completo.</p>
+        <a href="https://wa.me/5548998669011" target="_blank" style="display:inline-block;margin-top:16px;font-size:13px;color:var(--red);font-weight:600;text-decoration:none;letter-spacing:0.05em;" >Consultar →</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════ CTA BAND 1 ═══════════ -->
+<div class="cta-band" style="padding:56px 24px;">
+  <div class="max-w-6xl mx-auto relative z-10 flex flex-col sm:flex-row items-center justify-between gap-6">
+    <div class="reveal-left">
+      <h2 style="font-size:clamp(28px,5vw,52px);color:#fff;line-height:1.05;">VENHA FAZER SUA REVISÃO<br><span style="opacity:0.8;">NA CARLINHOS MOTOS</span></h2>
+    </div>
+    <a href="https://wa.me/5548998669011" target="_blank" class="reveal-right" style="flex-shrink:0;display:inline-flex;align-items:center;gap:10px;background:#000;color:#fff;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:0.08em;padding:16px 32px;border-radius:4px;text-decoration:none;transition:background 0.2s,transform 0.2s;white-space:nowrap;" onmouseover="this.style.background='#1a0000';this.style.transform='translateY(-2px)'" onmouseout="this.style.background='#000';this.style.transform='translateY(0)'">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      FALAR NO WHATSAPP
+    </a>
+  </div>
+</div>
+
+
+<!-- ═══════════ PEÇAS E ACESSÓRIOS ═══════════ -->
+<section style="padding:96px 24px;background:var(--bg);">
+  <div class="max-w-6xl mx-auto">
+    <div class="reveal" style="margin-bottom:56px;">
+      <div style="font-size:12px;font-weight:600;letter-spacing:0.18em;color:var(--red);margin-bottom:12px;">LOJA CARLINHOS MOTOS</div>
+      <h2 style="font-size:clamp(42px,6vw,72px);line-height:0.95;margin-bottom:16px;">
+        PEÇAS E<br><span style="color:var(--red);">ACESSÓRIOS</span>
+      </h2>
+      <div class="red-bar" style="width:60px;"></div>
+    </div>
+
+    <!-- grid assimétrico de fotos -->
+    <div class="gallery-grid reveal delay-1">
+      <!-- foto grande esquerda -->
+      <div class="gallery-item g-main" style="height:420px;">
+        <img src="assets/acc_main.png" alt="Capacete e luvas premium" />
+        <div style="position:absolute;bottom:0;left:0;right:0;padding:20px 18px;background:linear-gradient(to top,rgba(0,0,0,0.8),transparent);">
+          <span style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:0.06em;">EQUIPAMENTOS DE ALTA PERFORMANCE</span>
+        </div>
+      </div>
+      <!-- 4 fotos menores direita -->
+      <div class="gallery-item" style="height:200px;">
+        <img src="assets/acc_jacket.png" alt="Jaquetas de proteção" />
+      </div>
+      <div class="gallery-item" style="height:200px;">
+        <img src="assets/acc_exhaust.png" alt="Escapamentos esportivos" />
+      </div>
+      <div class="gallery-item" style="height:200px;">
+        <img src="assets/acc_store.png" alt="Acessórios na loja" />
+      </div>
+      <div class="gallery-item" style="height:200px;">
+        <img src="assets/acc_gloves.png" alt="Luvas e vestuário" />
+      </div>
+    </div>
+
+    <p class="reveal delay-2" style="margin-top:20px;font-size:13px;color:var(--muted);text-align:center;letter-spacing:0.05em;">Capacetes, jaquetas, luvas, escapamentos e peças originais para você e sua moto andarem no estilo.</p>
+  </div>
+</section>
+
+
+<!-- ═══════════ BENEFÍCIOS ═══════════ -->
+<section id="beneficios" style="padding:96px 24px;background:var(--bg2);">
+  <div class="max-w-6xl mx-auto">
+    <div class="text-center reveal" style="margin-bottom:64px;">
+      <div style="font-size:12px;font-weight:600;letter-spacing:0.18em;color:var(--red);margin-bottom:12px;">NOSSOS DIFERENCIAIS</div>
+      <h2 style="font-size:clamp(42px,6vw,72px);line-height:0.95;margin-bottom:16px;">
+        POR QUE <span style="color:var(--red);">ESCOLHER</span><br>A CARLINHOS MOTOS
+      </h2>
+      <div class="red-bar" style="width:60px;margin:0 auto;"></div>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+      <div class="benefit-card reveal delay-1">
+        <div class="benefit-icon">🛡️</div>
+        <h3 class="bebas" style="font-size:24px;margin-bottom:10px;">Mais Segurança</h3>
+        <p style="font-size:14px;color:var(--muted);line-height:1.65;">Revisão completa para você andar sem preocupações. Cada parafuso no lugar certo.</p>
+      </div>
+
+      <div class="benefit-card reveal delay-2">
+        <div class="benefit-icon">💰</div>
+        <h3 class="bebas" style="font-size:24px;margin-bottom:10px;">Mais Economia</h3>
+        <p style="font-size:14px;color:var(--muted);line-height:1.65;">Moto revisada consome menos combustível e evita consertos caros no futuro.</p>
+      </div>
+
+      <div class="benefit-card reveal delay-3">
+        <div class="benefit-icon">⚡</div>
+        <h3 class="bebas" style="font-size:24px;margin-bottom:10px;">Mais Desempenho</h3>
+        <p style="font-size:14px;color:var(--muted);line-height:1.65;">Motor calibrado, transmissão afinada e freios na medida: sinta a diferença na aceleração.</p>
+      </div>
+
+      <div class="benefit-card reveal delay-4">
+        <div class="benefit-icon">♾️</div>
+        <h3 class="bebas" style="font-size:24px;margin-bottom:10px;">Maior Durabilidade</h3>
+        <p style="font-size:14px;color:var(--muted);line-height:1.65;">Manutenção preventiva regular dobra a vida útil da sua moto. Cuide hoje, rode por anos.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════ CONFIANÇA ═══════════ -->
+<section style="padding:80px 24px;background:var(--bg);">
+  <div class="max-w-4xl mx-auto text-center">
+    <div class="reveal">
+      <div style="font-size:clamp(28px,5vw,52px);font-family:'Bebas Neue',sans-serif;line-height:1.1;color:var(--muted);">
+        "
+        <span style="color:var(--text);">CUIDADO QUE VOCÊ SENTE,<br></span>
+        <span style="color:var(--red);">CONFIANÇA QUE VOCÊ MERECE!</span>
+        "
+      </div>
+      <div style="margin-top:24px;width:50px;height:1px;background:var(--red);margin-left:auto;margin-right:auto;"></div>
+      <p style="margin-top:20px;font-size:14px;color:var(--muted);letter-spacing:0.1em;font-weight:600;">CARLINHOS MOTOS – INGLESES, FLORIANÓPOLIS</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════ CONTATO ═══════════ -->
+<section id="contato" style="padding:96px 24px;background:var(--bg2);">
+  <div class="max-w-6xl mx-auto">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+
+      <div>
+        <div class="reveal" style="margin-bottom:40px;">
+          <div style="font-size:12px;font-weight:600;letter-spacing:0.18em;color:var(--red);margin-bottom:12px;">FALE COM A GENTE</div>
+          <h2 style="font-size:clamp(42px,6vw,72px);line-height:0.95;margin-bottom:16px;">
+            ENTRE EM<br><span style="color:var(--red);">CONTATO</span>
+          </h2>
+          <div class="red-bar" style="width:60px;"></div>
+          <p style="margin-top:20px;font-size:16px;color:var(--muted);line-height:1.65;">Sua moto em boas mãos sempre.<br>Agende sua revisão agora mesmo!</p>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:14px;">
+
+          <a href="https://wa.me/5548998669011" target="_blank" class="contact-item reveal delay-1" style="text-decoration:none;color:var(--text);">
+            <div class="contact-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="var(--red)"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            </div>
+            <div>
+              <div style="font-size:11px;color:var(--muted);letter-spacing:0.1em;margin-bottom:2px;">WHATSAPP / TELEFONE</div>
+              <div style="font-size:18px;font-weight:600;">(48) 99866-9011</div>
+            </div>
+          </a>
+
+          <a href="https://instagram.com/carlinhos_motos01" target="_blank" class="contact-item reveal delay-2" style="text-decoration:none;color:var(--text);">
+            <div class="contact-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="var(--red)" stroke="none"/></svg>
+            </div>
+            <div>
+              <div style="font-size:11px;color:var(--muted);letter-spacing:0.1em;margin-bottom:2px;">INSTAGRAM</div>
+              <div style="font-size:18px;font-weight:600;">@carlinhos_motos01</div>
+            </div>
+          </a>
+
+          <div class="contact-item reveal delay-3">
+            <div class="contact-icon">📍</div>
+            <div>
+              <div style="font-size:11px;color:var(--muted);letter-spacing:0.1em;margin-bottom:2px;">ENDEREÇO</div>
+              <div style="font-size:16px;font-weight:600;line-height:1.4;">Intendente João Nunes Vieira, 155<br>
+              <span style="font-size:14px;color:var(--muted);font-weight:400;">Ingleses do Rio Vermelho – Florianópolis/SC</span></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- MAP placeholder + CTA -->
+      <div class="reveal-right" style="height:100%;">
+        <div style="background:var(--card);border-radius:12px;overflow:hidden;border:1px solid rgba(204,0,0,0.2);height:340px;position:relative;">
+          <iframe
+            src="https://maps.google.com/maps?q=Intendente+Jo%C3%A3o+Nunes+Vieira,+155+Ingleses+do+Rio+Vermelho+Florian%C3%B3polis&t=&z=15&ie=UTF8&iwloc=&output=embed"
+            width="100%" height="100%"
+            style="border:0;filter:grayscale(60%) invert(80%) contrast(90%);"
+            allowfullscreen="" loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade">
+          </iframe>
+          <div style="position:absolute;inset:0;pointer-events:none;border:2px solid rgba(204,0,0,0.3);border-radius:12px;"></div>
+        </div>
+
+        <div style="margin-top:20px;background:rgba(204,0,0,0.06);border:1px solid rgba(204,0,0,0.2);border-radius:10px;padding:24px;">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;margin-bottom:8px;">HORÁRIO DE ATENDIMENTO</div>
+          <div style="font-size:14px;color:var(--muted);line-height:1.8;">
+            <span style="color:var(--text);">Segunda a Sexta</span> — 08h às 18h<br>
+            <span style="color:var(--text);">Sábado</span> — 08h às 12h<br>
+            <span style="color:var(--red);">Domingo</span> — Fechado
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════ FINAL CTA ═══════════ -->
+<section style="padding:80px 24px;background:var(--bg);text-align:center;">
+  <div class="max-w-3xl mx-auto">
+    <div class="reveal" style="background:var(--card);border:1px solid rgba(204,0,0,0.25);border-radius:16px;padding:56px 32px;">
+      <div style="font-size:12px;font-weight:600;letter-spacing:0.18em;color:var(--red);margin-bottom:16px;">SUA MOTO MERECE</div>
+      <h2 style="font-size:clamp(38px,6vw,64px);line-height:1;margin-bottom:20px;">
+        AGENDE SUA<br><span style="color:var(--red);">REVISÃO HOJE</span>
+      </h2>
+      <p style="font-size:16px;color:var(--muted);margin-bottom:36px;line-height:1.65;">Não espere dar problema para cuidar da sua moto.<br>Uma revisão preventiva vale muito mais do que um conserto.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:14px;justify-content:center;">
+        <a href="https://wa.me/5548998669011" target="_blank" class="btn-red" style="font-size:18px;padding:16px 36px;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          CHAMAR NO WHATSAPP
+        </a>
+        <a href="tel:+5548998669011" class="btn-outline" style="font-size:18px;padding:14px 34px;">📞 LIGAR AGORA</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════ FOOTER ═══════════ -->
+<footer style="padding:40px 24px;">
+  <div class="max-w-6xl mx-auto">
+    <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;">
+      <div style="display:flex;align-items:center;">
+        <img src="logo.png" alt="Carlinhos Motos" style="height:52px;width:auto;object-fit:contain;filter:drop-shadow(0 0 6px rgba(204,0,0,0.35));" />
+      </div>
+      <div style="font-size:12px;color:var(--muted);text-align:center;">
+        © 2026 Carlinhos Motos. Todos os direitos reservados.
+      </div>
+      <div style="display:flex;gap:12px;">
+        <a href="https://wa.me/5548998669011" target="_blank" style="width:36px;height:36px;background:rgba(255,255,255,0.06);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--muted);text-decoration:none;transition:background 0.2s,color 0.2s;" onmouseover="this.style.background='rgba(204,0,0,0.2)';this.style.color='#fff'" onmouseout="this.style.background='rgba(255,255,255,0.06)';this.style.color='var(--muted)'">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        </a>
+        <a href="https://instagram.com/carlinhos_motos01" target="_blank" style="width:36px;height:36px;background:rgba(255,255,255,0.06);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--muted);text-decoration:none;transition:background 0.2s,color 0.2s;" onmouseover="this.style.background='rgba(204,0,0,0.2)';this.style.color='#fff'" onmouseout="this.style.background='rgba(255,255,255,0.06)';this.style.color='var(--muted)'">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ═══════════ FLOATING WHATSAPP ═══════════ -->
+<div id="wa-container">
+  <div id="wa-tooltip">
+    <div id="wa-typing" style="display:flex;align-items:center;gap:4px;">
+      <span style="font-size:13px;color:#777;font-style:italic;">Carlinhos está digitando</span>
+      <div class="wa-dot"></div><div class="wa-dot"></div><div class="wa-dot"></div>
+    </div>
+    <div id="wa-msg" style="display:none;align-items:center;gap:8px;font-size:15px;color:#111;">
+      <span>👋</span> Oi, como posso ajudar?
+    </div>
+  </div>
+  <a href="https://wa.me/5548998669011" target="_blank" id="float-wa" style="width:58px;height:58px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(37,211,102,0.4);transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  </a>
+</div>
+
+
+<!-- ═══════════ JS ═══════════ -->
+<script>
+  // ── Navbar scroll
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 60);
+  });
+
+  // ── Scroll reveal (IntersectionObserver)
+  const revealEls = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+  revealEls.forEach(el => observer.observe(el));
+
+  // ── Counter animation
+  function animateCounter(el, target, duration = 1800) {
+    let start = null;
+    const step = (timestamp) => {
+      if (!start) start = timestamp;
+      const progress = Math.min((timestamp - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      el.textContent = Math.floor(eased * target);
+      if (progress < 1) requestAnimationFrame(step);
+      else el.textContent = target;
+    };
+    requestAnimationFrame(step);
+  }
+
+  const counterEls = document.querySelectorAll('.stat-num[data-target]');
+  const counterObserver = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const target = parseInt(e.target.dataset.target);
+        animateCounter(e.target, target);
+        counterObserver.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.5 });
+  counterEls.forEach(el => counterObserver.observe(el));
+
+  // ── Hero parallax (subtle)
+  const heroBg = document.getElementById('hero-bg');
+  window.addEventListener('scroll', () => {
+    const y = window.scrollY;
+    if (y < window.innerHeight) {
+      heroBg.style.transform = `translateY(${y * 0.3}px)`;
+    }
+  }, { passive: true });
+
+  // ── Animate hero elements on load
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+      document.querySelectorAll('#hero .reveal, #hero .reveal-left, #hero .reveal-right').forEach(el => {
+        el.classList.add('visible');
+      });
+    }, 200);
+
+    // ── WA Tooltip Logic
+    setTimeout(() => {
+      const tooltip = document.getElementById('wa-tooltip');
+      if (tooltip) {
+        // Show tooltip typing
+        tooltip.style.opacity = '1';
+        tooltip.style.transform = 'translateY(0) scale(1)';
+        
+        // After 2.5s, switch to final message
+        setTimeout(() => {
+          document.getElementById('wa-typing').style.display = 'none';
+          document.getElementById('wa-msg').style.display = 'flex';
+        }, 2500);
+      }
+    }, 2500);
+  });
+</script>
+</body>
+</html>
