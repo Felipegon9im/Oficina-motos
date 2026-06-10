@@ -1,0 +1,6 @@
+{
+  "name": "Carlinhos Motos",
+  "description": "Oficina mecânica de motos em Florianópolis – Ingleses. Revisão preventiva, peças, acessórios e atendimento personalizado via WhatsApp.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
